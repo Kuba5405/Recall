@@ -1,0 +1,36 @@
+# Tags a release whenever main is updated.
+#
+# Tags are created only on main, matching the project's rule that a tag marks a
+# real release. The branch ruleset protects branches, not tags, so this runs
+# with the default token and needs no bypass.
+name: Release tag
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  tag:
+    name: Tag release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create and push the version tag
+        run: |
+          version="$(tr -d '[:space:]' < VERSION)"
+          if git rev-parse -q --verify "refs/tags/v${version}" >/dev/null; then
+            echo "::notice::tag v${version} already exists; nothing to do"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "v${version}" -m "v${version}"
+          git push origin "v${version}"
+          echo "::notice::tagged v${version}"

@@ -1,0 +1,62 @@
+# Applies the project's automated version bump to a pull request.
+#
+# The bump lands as a commit on the PR's own branch BEFORE merge, rather than
+# being pushed to dev/staging/main afterwards: this repository is user-owned, so
+# GitHub Actions cannot be granted a ruleset bypass and cannot write to a
+# protected branch. See .github/scripts/bump_version.py for the bump rules.
+name: Version
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+    branches: [dev, staging, main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: version-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  bump:
+    name: Version bump
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-version') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the pull request branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+
+      - name: Reject promotions made directly from a protected branch
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          case "${HEAD_REF}" in
+            main | staging | dev)
+              echo "::error::Cannot bump the version on '${HEAD_REF}' because it is a protected branch. Promote by cutting a release/vX.Y.Z branch off '${HEAD_REF}' and opening the pull request into '${BASE_REF}' from there."
+              exit 1
+              ;;
+          esac
+
+      - name: Compute and apply the version bump
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: python3 .github/scripts/bump_version.py --base "${BASE_REF}"
+
+      - name: Commit and push the bump
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          if git diff --quiet -- VERSION CHANGELOG.md; then
+            echo "::notice::VERSION and CHANGELOG.md are already correct for this pull request"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add VERSION CHANGELOG.md
+          git commit -m "chore(version): bump to $(tr -d '[:space:]' < VERSION)"
+          git push origin "HEAD:${HEAD_REF}"
