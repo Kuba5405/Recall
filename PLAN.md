@@ -155,12 +155,25 @@ not the model. Only the on-device mode keeps content private end to end.
 accepted risk in the meantime is that the only copy of this data lives inside an
 application that is still proving itself.
 
+## AI processing in v1
+
+- **Both bring-your-own modes ship in v1**: an on-device model and a
+  user-supplied API key. This doubles the processing pipeline and its tests, and
+  is accepted deliberately under the "fuller vision" calibration.
+- **No text extraction of any kind in v1.** Not a dedicated OCR pipeline, and not
+  text read incidentally by a vision model — images are indexed by inferred tags
+  and description only. Deferred to a later version.
+- **Person attribution is manual in v1.** Automatic inference depends on reading
+  the sender's name out of a screenshot's chat header, which requires text
+  extraction; it arrives together with it in a later version.
+
+Consequence accepted: a screenshot of a conversation is findable as an image
+with inferred tags, not by the words inside it. The originating example —
+*"what restaurant did Marc send me"* — is not answerable by v1, by design.
+
 ## Still open
 
 - MVP feature scope: the explicit IN / OUT list for v1
-- Whether image text extraction (OCR) is in v1
-- Which bring-your-own-AI modes v1 must support — API key, on-device, or both
-- How a captured item is attributed to a person
 - Hosting and storage budget — **deliberately deferred**, to revisit before
   Phase 2 makes architecture decisions that depend on it
 - What "done" looks like for v1
