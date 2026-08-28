@@ -50,12 +50,26 @@ The cost is not storage. It is retrieval.
 
 ## Platforms
 
-- **Mobile is the primary target.** Which mobile operating systems — iOS,
-  Android, or both — is **OPEN**.
-- **A web app is also wanted**, alongside mobile rather than instead of it. Its
-  role in v1 is **OPEN**.
+- **iOS and Android, both from the start.** The author uses Android today and
+  switches to iPhone within three weeks, so a single-platform v1 would leave the
+  primary user unsupported.
+- **A web app is in v1, for search and review only.** Capture stays on the phone;
+  the browser is for finding and reading things on a big screen.
 - **An Electron desktop app is explicitly later**, once the project has scaled.
   Out of scope for v1.
+
+### Distribution constraints, acknowledged
+
+- iOS requires the **Apple Developer Program at $99/year** for any usable build.
+  A free Apple ID expires the app every 7 days and, more importantly, cannot use
+  **App Groups** — which a Share Extension needs to hand captured content to the
+  main app. The free tier therefore removes the core capture feature, not just
+  convenience. **This cost is accepted in principle and deferred**; it is not
+  yet paid or scheduled.
+- **Switzerland is not in the EU or EEA**, so the DMA routes — alternative app
+  marketplaces and web distribution — are unavailable. TestFlight or the App
+  Store are the only iOS distribution paths.
+- **Android has no equivalent constraints**: no fee, no review, no expiry.
 
 ## How content gets in
 
@@ -78,26 +92,39 @@ Android, impossible on iOS — was **considered and not chosen**.
 
 ## How content gets out
 
-**A search box with filters** is the primary retrieval interface: search across
-everything, narrowed by person, source app, date and content type.
+**v1 is deliberately bare-bones: a search box with filters, and nothing more.**
+Search across everything, narrowed by person, source app, date and content type.
 
-Whether plain-language question answering (*"what restaurant did Marc send me on
-Instagram last week?"*) is part of v1, layered on later, or dropped, is **OPEN** —
-it is how the core purpose was originally described, so it needs settling
-explicitly rather than by omission.
+**Plain-language question answering is explicitly deferred to a later version.**
+It is how the core purpose was originally described, so this is a conscious
+staging decision rather than an omission: prove capture, transcription and
+tagging first.
+
+## Offline behaviour
+
+**Capture works offline; processing happens when back online.** Content can
+always be added with no connection; transcription, tagging and indexing run once
+connectivity returns.
+
+## AI approach — bring your own model
+
+Recall does **not** ship its own hosted AI. Each user supplies the model:
+
+- an **on-device model**, for users who want nothing leaving the phone, or
+- an **API key** to a provider of their choice.
+
+Consequences accepted: AI quality varies per user and is outside the product's
+control, and the app must hold a user-supplied API key securely. Which of the
+two modes v1 must support — one or both — is **OPEN**.
 
 ## Still open
 
-Not yet discussed — each will be covered before this phase ends:
-
-- Which mobile operating system(s), and whether the web app is in v1
-- Whether plain-language question answering is in v1
-- MVP feature scope: what is explicitly IN and explicitly OUT for v1
-- Offline vs online requirements
 - Privacy & security: data sensitivity, encryption at rest, where data may live,
-  who else may ever access it
+  and whether anyone besides the author ever has access
 - Data retention & deletion, including whether anything needs a
   "permanently gone" guarantee
 - Data export / backup capability
-- Budget and cost constraints
+- Hosting and storage budget — bring-your-own-AI removes the AI running cost,
+  but not storage or sync costs
+- MVP feature scope: the explicit IN / OUT list for v1
 - What "done" looks like for v1
