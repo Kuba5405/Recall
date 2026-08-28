@@ -56,3 +56,19 @@ the original document.
   merge. A direct `dev` -> `staging` pull request would require writing to `dev`,
   which branch protection blocks. The repository is user-owned, so GitHub Actions
   cannot be granted a ruleset bypass to push to protected branches at all.
+
+### 2026-08-28 — Merged branches are deleted automatically
+
+- **Document:** global project rules (git workflow — branches)
+- **Was:** silent on what happens to a working branch once its pull request is
+  merged, so merged branches accumulated indefinitely.
+- **Now:** `delete_branch_on_merge` is enabled on the repository, so a pull
+  request's head branch is deleted the moment it merges. This covers both
+  `type/scope/short-description` working branches and the `release/vX.Y.Z`
+  branches used for promotions. Only `main`, `staging`, `dev` and branches with
+  active work in progress should ever exist.
+- **Why:** requested, to stop the branch list growing without bound. `main`,
+  `staging` and `dev` cannot be removed by this: the branch ruleset's `deletion`
+  rule protects them, and GitHub only ever deletes a pull request's head branch,
+  never its base.
+
