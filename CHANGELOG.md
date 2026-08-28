@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-08-28
+
+### Changed
+
+- Merged pull request branches are now deleted automatically, leaving only
+  `main`, `staging`, `dev` and branches with work in progress.
+
 ## [0.1.1] - 2026-08-28
 
 ### Added
