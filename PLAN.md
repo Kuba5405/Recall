@@ -48,13 +48,50 @@ Information arrives and is then effectively lost:
 
 The cost is not storage. It is retrieval.
 
+## Platforms
+
+- **Mobile is the primary target.** Which mobile operating systems — iOS,
+  Android, or both — is **OPEN**.
+- **A web app is also wanted**, alongside mobile rather than instead of it. Its
+  role in v1 is **OPEN**.
+- **An Electron desktop app is explicitly later**, once the project has scaled.
+  Out of scope for v1.
+
+## How content gets in
+
+**Explicit capture, plus an automatic photo library scan.**
+
+- Explicit: photos, written notes, voice notes, and content shared out of other
+  apps through the operating system's share sheet.
+- Automatic: scanning the camera roll for screenshots and photos, which is where
+  saved recommendations tend to accumulate.
+
+### Constraint accepted here
+
+Instagram, WhatsApp and Facebook provide **no way for an app to read your
+messages**. Content from those apps can only enter Recall when it is actively
+shared into it, or captured as a screenshot. Recall can only recall what was
+captured — it cannot reach back into a conversation that was never shared.
+
+Passive capture of incoming message notifications — technically possible on
+Android, impossible on iOS — was **considered and not chosen**.
+
+## How content gets out
+
+**A search box with filters** is the primary retrieval interface: search across
+everything, narrowed by person, source app, date and content type.
+
+Whether plain-language question answering (*"what restaurant did Marc send me on
+Instagram last week?"*) is part of v1, layered on later, or dropped, is **OPEN** —
+it is how the core purpose was originally described, so it needs settling
+explicitly rather than by omission.
+
 ## Still open
 
 Not yet discussed — each will be covered before this phase ends:
 
-- Target platform(s)
-- Core capture flow and how content actually enters the app
-- Primary retrieval interface
+- Which mobile operating system(s), and whether the web app is in v1
+- Whether plain-language question answering is in v1
 - MVP feature scope: what is explicitly IN and explicitly OUT for v1
 - Offline vs online requirements
 - Privacy & security: data sensitivity, encryption at rest, where data may live,
