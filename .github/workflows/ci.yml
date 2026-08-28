@@ -1,0 +1,31 @@
+# PLACEHOLDER CI — the tech stack is not chosen yet (Phase 2).
+# This workflow currently only checks out the repo and sanity-checks the
+# project docs. Real lint, test, and build steps must be added in Phase 2,
+# and wired in as required status checks on branch protection.
+name: CI
+
+on:
+  pull_request:
+    branches: [dev, staging, main]
+
+jobs:
+  checks:
+    name: Repository checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Verify VERSION exists and is valid SemVer
+        run: |
+          test -f VERSION || { echo "::error::VERSION file is missing"; exit 1; }
+          version="$(tr -d '[:space:]' < VERSION)"
+          echo "VERSION = ${version}"
+          echo "${version}" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$' \
+            || { echo "::error::VERSION '${version}' is not valid Semantic Versioning"; exit 1; }
+
+      - name: Verify CHANGELOG exists and has an Unreleased section
+        run: |
+          test -f CHANGELOG.md || { echo "::error::CHANGELOG.md is missing"; exit 1; }
+          grep -q '## \[Unreleased\]' CHANGELOG.md \
+            || { echo "::error::CHANGELOG.md has no [Unreleased] section"; exit 1; }
