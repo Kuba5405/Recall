@@ -117,14 +117,50 @@ Consequences accepted: AI quality varies per user and is outside the product's
 control, and the app must hold a user-supplied API key securely. Which of the
 two modes v1 must support — one or both — is **OPEN**.
 
+## Privacy & security
+
+The content is as sensitive as personal data gets — photos, voice notes and
+private messages. The decisions reflect that:
+
+- **Storage:** the device is primary. An **encrypted copy syncs** so the web app
+  and other devices can reach it, and so a lost phone is not a lost brain.
+- **Encryption:** **end-to-end**. Keys never leave the user's devices and the
+  server stores ciphertext it cannot decrypt.
+- **Web search under E2EE:** the **browser downloads and decrypts the index**
+  itself. The server is never given readable content or readable tags, at the
+  cost of an initial sync into the browser and a decryption key held in the tab.
+- **Access:** single user for now. Sharing an individual item with someone else
+  is a plausible later feature and should not be designed out, but there are no
+  accounts, no shared collections and no multi-user model in v1.
+
+### Limits of the guarantee, accepted
+
+**End-to-end encryption does not protect content from the AI provider.** When a
+user supplies an API key, their photos and transcripts are sent to that provider
+in readable form — unavoidable for a cloud model. E2EE protects the sync server,
+not the model. Only the on-device mode keeps content private end to end.
+
+## Data retention & deletion
+
+- **Soft delete by default**, into a recoverable trash, so a mis-tap cannot
+  destroy something irreplaceable.
+- **Plus an explicit "permanently gone" action** for anything genuinely
+  sensitive, guaranteeing removal from every copy including backups.
+- E2EE strengthens this materially: destroying the key renders every encrypted
+  copy unreadable, including copies no longer under the user's control.
+
+## Data export & backup
+
+**Wanted, but post-MVP.** Recorded as planned scope rather than forgotten. The
+accepted risk in the meantime is that the only copy of this data lives inside an
+application that is still proving itself.
+
 ## Still open
 
-- Privacy & security: data sensitivity, encryption at rest, where data may live,
-  and whether anyone besides the author ever has access
-- Data retention & deletion, including whether anything needs a
-  "permanently gone" guarantee
-- Data export / backup capability
-- Hosting and storage budget — bring-your-own-AI removes the AI running cost,
-  but not storage or sync costs
 - MVP feature scope: the explicit IN / OUT list for v1
+- Whether image text extraction (OCR) is in v1
+- Which bring-your-own-AI modes v1 must support — API key, on-device, or both
+- How a captured item is attributed to a person
+- Hosting and storage budget — **deliberately deferred**, to revisit before
+  Phase 2 makes architecture decisions that depend on it
 - What "done" looks like for v1
